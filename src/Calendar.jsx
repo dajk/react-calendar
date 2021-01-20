@@ -384,7 +384,6 @@ export default class Calendar extends Component {
 
     const nextActiveStartDate = getActiveStartDate({
       ...this.props,
-      value: nextValue,
     });
 
     event.persist();
@@ -439,9 +438,9 @@ export default class Calendar extends Component {
   renderContent(next) {
     const {
       activeStartDate: currentActiveStartDate,
+      hover,
       onMouseOver,
       valueType,
-      value,
       view,
     } = this;
     const {
@@ -453,8 +452,8 @@ export default class Calendar extends Component {
       tileClassName,
       tileContent,
       tileDisabled,
+      value,
     } = this.props;
-    const { hover } = this;
 
     const activeStartDate = (
       next
@@ -530,7 +529,9 @@ export default class Calendar extends Component {
             formatShortWeekday={formatShortWeekday}
             onClickWeekNumber={onClickWeekNumber}
             onMouseLeave={selectRange ? onMouseLeave : null}
-            showFixedNumberOfWeeks={showFixedNumberOfWeeks || showDoubleView}
+            showFixedNumberOfWeeks={
+              showFixedNumberOfWeeks || (showDoubleView && showNeighboringMonth)
+            }
             showNeighboringMonth={showNeighboringMonth}
             showWeekNumbers={showWeekNumbers}
             {...commonProps}
@@ -602,15 +603,16 @@ export default class Calendar extends Component {
       inputRef,
       selectRange,
       showDoubleView,
+      value,
     } = this.props;
-    const { onMouseLeave, value } = this;
+    const { onMouseLeave } = this;
     const valueArray = [].concat(value);
 
     return (
       <div
         className={mergeClassNames(
           baseClassName,
-          selectRange && valueArray.length === 1 && `${baseClassName}--selectRange`,
+          selectRange && valueArray.filter((v) => v).length === 1 && `${baseClassName}--selectRange`,
           showDoubleView && `${baseClassName}--doubleView`,
           className,
         )}
